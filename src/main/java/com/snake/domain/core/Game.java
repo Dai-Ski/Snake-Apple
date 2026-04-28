@@ -87,4 +87,12 @@ public class Game {
     public GameState getState() {
         return new GameState(snake.getPositions(), apple, score, status);
     }
+
+    public void togglePause() {
+        if (status == GameState.Status.RUNNING) {
+            status = GameState.Status.PAUSED;
+        } else if (status == GameState.Status.PAUSED) {
+            status = GameState.Status.RUNNING;
+        }
+    }
 }

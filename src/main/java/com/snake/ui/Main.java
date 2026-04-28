@@ -90,11 +90,16 @@ public class Main extends Application {
             case DOWN: case S: dir = GameState.Direction.DOWN; break;
             case LEFT: case A: dir = GameState.Direction.LEFT; break;
             case RIGHT: case D: dir = GameState.Direction.RIGHT; break;
+            case SPACE:
+                game.togglePause();
+                currentState = game.getState();
+                renderer.render(currentState);
+                return;
             default: return;
         }
 
         // Limit buffer to 2 pending moves to prevent rapid key-mashing bugs
-        if (inputBuffer.size() < 2) {
+        if (dir != null && inputBuffer.size() < 2) {
             inputBuffer.add(dir);
         }
     }

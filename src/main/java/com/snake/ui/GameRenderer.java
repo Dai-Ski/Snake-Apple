@@ -136,6 +136,14 @@ public class GameRenderer {
             gc.setFont(javafx.scene.text.Font.font("Monospaced", 15));
             gc.setFill(Color.WHITE);
             gc.fillText("Perfect Score: " + state.score, canvas.getWidth() / 2 - 70, canvas.getHeight() / 2 + 30);
+        } else if (state.status == GameState.Status.PAUSED) {
+            gc.setFill(Color.color(0, 0, 0, 0.5));
+            gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+            gc.setFill(Color.WHITE);
+            gc.setFont(javafx.scene.text.Font.font("Monospaced", 30));
+            gc.fillText("PAUSED", canvas.getWidth() / 2 - 50, canvas.getHeight() / 2);
+            gc.setFont(javafx.scene.text.Font.font("Monospaced", 15));
+            gc.fillText("Press Space to Resume", canvas.getWidth() / 2 - 80, canvas.getHeight() / 2 + 30);
         }
     }
 }
