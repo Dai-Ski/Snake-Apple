@@ -2,7 +2,8 @@
 
 A modern, highly-polished, and high-performance desktop Snake engine built from scratch in Java.
 
-![Gameplay](assets/gameplay_screenshot.png)
+![Records Screen](assets/records.png)
+![Gameplay](assets/gameplay.jpg)
 
 ## 🚀 Installation & How to Play
 
