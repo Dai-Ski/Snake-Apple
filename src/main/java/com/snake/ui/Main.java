@@ -138,7 +138,10 @@ extends Application {
         profileOverlay.setAlignment(Pos.CENTER);
         profileOverlay.setStyle("-fx-background-color: #000000; -fx-padding: 20;");
         profileOverlay.setVisible(false);
-        Text profileTitle = new Text("Connect with me:");
+        Text profileName = new Text("Dai Ski");
+        profileName.setFont(Font.font(this.pixelFont.getFamily(), 24.0));
+        profileName.setStyle("-fx-fill: #FFCC00;");
+        Text profileTitle = new Text("Connect with Ado:");
         profileTitle.setFont(Font.font(this.pixelFont.getFamily(), 16.0));
         profileTitle.setStyle("-fx-fill: white;");
         VBox linksBox = new VBox(10.0);
@@ -154,7 +157,7 @@ extends Application {
         closeProfileBtn.setFont(Font.font(this.pixelFont.getFamily(), 12.0));
         closeProfileBtn.setStyle("-fx-background-color: #444444; -fx-text-fill: white; -fx-cursor: hand;");
         closeProfileBtn.setOnAction(e -> profileOverlay.setVisible(false));
-        profileOverlay.getChildren().addAll(new Node[]{profileTitle, linksBox, closeProfileBtn});
+        profileOverlay.getChildren().addAll(new Node[]{profileName, profileTitle, linksBox, closeProfileBtn});
         this.startScreen = new VBox(20.0);
         this.startScreen.setAlignment(Pos.CENTER);
         this.startScreen.setStyle("-fx-background-color: #000000; -fx-padding: 20;");
@@ -200,7 +203,7 @@ extends Application {
             largeAvatar.setFitWidth(120.0);
             largeAvatar.setFitHeight(120.0);
             largeAvatar.setPreserveRatio(true);
-            profileOverlay.getChildren().add(0, largeAvatar);
+            profileOverlay.getChildren().add(1, largeAvatar);
             ImageView smallAvatar = new ImageView(avatarImage);
             smallAvatar.setFitWidth(35.0);
             smallAvatar.setFitHeight(35.0);
