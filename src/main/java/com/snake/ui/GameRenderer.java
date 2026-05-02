@@ -1,5 +1,6 @@
 package com.snake.ui;
 
+import com.snake.domain.core.GameConfig;
 import com.snake.domain.model.GameState;
 import java.util.List;
 import javafx.scene.canvas.Canvas;
@@ -27,9 +28,9 @@ public class GameRenderer {
         for (int row = 0; row < this.rows; ++row) {
             for (int col = 0; col < this.cols; ++col) {
                 if ((row + col) % 2 == 0) {
-                    gc.setFill(Color.web("#1e1e1e"));
+                    gc.setFill(Color.web(GameConfig.COLOR_BG_DARK));
                 } else {
-                    gc.setFill(Color.web("#2c2c2c"));
+                    gc.setFill(Color.web(GameConfig.COLOR_BG_LIGHT));
                 }
                 gc.fillRect(col * this.cellSize, row * this.cellSize, this.cellSize, this.cellSize);
             }
@@ -38,9 +39,9 @@ public class GameRenderer {
         if (applePos != null) {
             double ax = applePos.x * this.cellSize;
             double ay = applePos.y * this.cellSize;
-            gc.setFill(Color.web("#ff4757"));
+            gc.setFill(Color.web(GameConfig.COLOR_APPLE));
             gc.fillOval(ax + 3.0, ay + 6.0, this.cellSize - 6.0, this.cellSize - 8.0);
-            gc.setFill(Color.web("#2ed573"));
+            gc.setFill(Color.web(GameConfig.COLOR_APPLE_LEAF));
             gc.fillOval(ax + this.cellSize / 2.0, ay + 2.0, 8.0, 6.0);
         }
         if (!(snakePositions = state.snake).isEmpty()) {
@@ -48,7 +49,7 @@ public class GameRenderer {
             GameState.Position head = snakePositions.get(0);
             double hx = head.x * this.cellSize;
             double hy = head.y * this.cellSize;
-            gc.setFill(Color.web("#2ed573"));
+            gc.setFill(Color.web(GameConfig.COLOR_SNAKE_HEAD));
             gc.fillRoundRect(hx + 1.0, hy + 1.0, this.cellSize - 2.0, this.cellSize - 2.0, 10.0, 10.0);
             int dx = 1;
             int dy = 0;
@@ -103,7 +104,7 @@ public class GameRenderer {
             double pOffY = dy == 1 ? 3.0 : (dy == -1 ? 0.0 : 1.5);
             gc.fillOval(eye1X + pOffX, eye1Y + pOffY, pSize, pSize);
             gc.fillOval(eye2X + pOffX, eye2Y + pOffY, pSize, pSize);
-            gc.setFill(Color.web("#7bed9f"));
+            gc.setFill(Color.web(GameConfig.COLOR_SNAKE_BODY));
             for (int i = 1; i < snakePositions.size(); ++i) {
                 GameState.Position p = snakePositions.get(i);
                 gc.fillRoundRect(p.x * this.cellSize + 2.0, p.y * this.cellSize + 2.0, this.cellSize - 4.0, this.cellSize - 4.0, 8.0, 8.0);
@@ -113,26 +114,26 @@ public class GameRenderer {
             gc.setFill(Color.color(0.0, 0.0, 0.0, 0.5));
             gc.fillRect(0.0, 0.0, this.canvas.getWidth(), this.canvas.getHeight());
             gc.setFill(Color.WHITE);
-            gc.setFont(Font.font("Monospaced", 30.0));
+            gc.setFont(Font.font(GameConfig.FONT_NAME, 30.0));
             gc.fillText("GAME OVER", this.canvas.getWidth() / 2.0 - 80.0, this.canvas.getHeight() / 2.0);
-            gc.setFont(Font.font("Monospaced", 15.0));
+            gc.setFont(Font.font(GameConfig.FONT_NAME, 15.0));
             gc.fillText("Score: " + state.score, this.canvas.getWidth() / 2.0 - 40.0, this.canvas.getHeight() / 2.0 + 30.0);
         } else if (state.status == GameState.Status.GAME_WON) {
             gc.setFill(Color.color(0.0, 0.0, 0.0, 0.5));
             gc.fillRect(0.0, 0.0, this.canvas.getWidth(), this.canvas.getHeight());
             gc.setFill(Color.web("#f1c40f"));
-            gc.setFont(Font.font("Monospaced", 30.0));
+            gc.setFont(Font.font(GameConfig.FONT_NAME, 30.0));
             gc.fillText("YOU WON!", this.canvas.getWidth() / 2.0 - 70.0, this.canvas.getHeight() / 2.0);
-            gc.setFont(Font.font("Monospaced", 15.0));
+            gc.setFont(Font.font(GameConfig.FONT_NAME, 15.0));
             gc.setFill(Color.WHITE);
             gc.fillText("Perfect Score: " + state.score, this.canvas.getWidth() / 2.0 - 70.0, this.canvas.getHeight() / 2.0 + 30.0);
         } else if (state.status == GameState.Status.PAUSED) {
             gc.setFill(Color.color(0.0, 0.0, 0.0, 0.5));
             gc.fillRect(0.0, 0.0, this.canvas.getWidth(), this.canvas.getHeight());
             gc.setFill(Color.WHITE);
-            gc.setFont(Font.font("Monospaced", 30.0));
+            gc.setFont(Font.font(GameConfig.FONT_NAME, 30.0));
             gc.fillText("PAUSED", this.canvas.getWidth() / 2.0 - 50.0, this.canvas.getHeight() / 2.0);
-            gc.setFont(Font.font("Monospaced", 15.0));
+            gc.setFont(Font.font(GameConfig.FONT_NAME, 15.0));
             gc.fillText("Press Space to Resume", this.canvas.getWidth() / 2.0 - 80.0, this.canvas.getHeight() / 2.0 + 30.0);
         }
     }
