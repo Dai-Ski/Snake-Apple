@@ -1,0 +1,15 @@
+#!/bin/bash
+DIR=$(dirname "$0")
+APP_ROOT="$DIR/../Resources/app"
+LIB_PATH="$APP_ROOT/lib"
+JAR_PATH="$APP_ROOT/snake-apple-1.0-SNAPSHOT.jar"
+ICON_PATH="$DIR/../Resources/applet.icns"
+
+exec java -Xdock:name="Eve's Apple" \
+     -Xdock:icon="$ICON_PATH" \
+     -Dapple.awt.application.name="Eve's Apple" \
+     -Dapple.laf.useScreenMenuBar=true \
+     --module-path "$LIB_PATH" \
+     --add-modules javafx.controls,javafx.graphics \
+     -cp "$JAR_PATH" \
+     com.snake.ui.Main
