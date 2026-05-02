@@ -22,6 +22,7 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
+import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
@@ -200,11 +201,29 @@ extends Application {
             largeAvatar.setFitWidth(120.0);
             largeAvatar.setFitHeight(120.0);
             largeAvatar.setPreserveRatio(true);
+            
+            // Animate the cat to sway/swing slightly
+            RotateTransition sway = new RotateTransition(Duration.seconds(1.5), largeAvatar);
+            sway.setFromAngle(-3);
+            sway.setToAngle(3);
+            sway.setCycleCount(-1);
+            sway.setAutoReverse(true);
+            sway.play();
+            
             profileOverlay.getChildren().add(0, largeAvatar);
             ImageView smallAvatar = new ImageView(avatarImage);
             smallAvatar.setFitWidth(35.0);
             smallAvatar.setFitHeight(35.0);
             smallAvatar.setPreserveRatio(true);
+            
+            // Subtle sway for the small icon too
+            RotateTransition smallSway = new RotateTransition(Duration.seconds(1.5), smallAvatar);
+            smallSway.setFromAngle(-2);
+            smallSway.setToAngle(2);
+            smallSway.setCycleCount(-1);
+            smallSway.setAutoReverse(true);
+            smallSway.play();
+            
             profileBtn.setGraphic(smallAvatar);
         } else {
             profileBtn.setText("\ud83d\udc64");
