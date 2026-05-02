@@ -7,10 +7,12 @@ import com.snake.domain.model.GameState;
 import com.snake.ui.GameRenderer;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -24,6 +26,7 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.WritableValue;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -62,8 +65,31 @@ extends Application {
     private AnimationTimer gameTimer;
     private Font pixelFont;
     private final ScoreManager scoreManager = new ScoreManager();
+    private static FileOutputStream lockStream;
+    private static FileLock fileLock;
+
+    private boolean acquireLock() {
+        try {
+            File file = new File(LOCK_FILE);
+            lockStream = new FileOutputStream(file);
+            fileLock = lockStream.getChannel().tryLock();
+            if (fileLock != null) {
+                file.deleteOnExit();
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    private static final String LOCK_FILE = System.getProperty("user.home") + File.separator + ".eves_apple_lock";
 
     public void start(Stage primaryStage) {
+        if (!this.acquireLock()) {
+            System.err.println("Another instance is already running.");
+            Platform.exit();
+            return;
+        }
         String[][] links;
         this.scoreManager.loadHighScores();
         try {
