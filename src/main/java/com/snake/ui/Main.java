@@ -230,6 +230,14 @@ extends Application {
         Scene scene = new Scene(this.rootPane);
         scene.setOnKeyPressed(this::handleKeyPress);
         primaryStage.setTitle("Eve's Apple");
+        try {
+            InputStream iconStream = this.getClass().getResourceAsStream("/profile.png");
+            if (iconStream != null) {
+                primaryStage.getIcons().add(new Image(iconStream));
+            }
+        } catch (Exception e) {
+            // Ignore icon loading errors
+        }
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
