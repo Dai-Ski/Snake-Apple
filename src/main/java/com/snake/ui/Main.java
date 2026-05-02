@@ -1,6 +1,8 @@
 package com.snake.ui;
 
 import com.snake.domain.core.Game;
+import com.snake.domain.core.GameConfig;
+import com.snake.domain.core.ScoreManager;
 import com.snake.domain.model.GameState;
 import com.snake.ui.GameRenderer;
 import java.io.BufferedReader;
@@ -46,17 +48,12 @@ import javafx.util.Duration;
 
 public class Main
 extends Application {
-    private static final int COLS = 20;
-    private static final int ROWS = 20;
-    private static final int CELL_SIZE = 30;
     private Game game;
     private GameRenderer renderer;
     private GameState currentState;
     private long lastTickTime = 0L;
     private final Queue<GameState.Direction> inputBuffer = new LinkedList<GameState.Direction>();
     private boolean gameIsRunning = false;
-    private final List<Integer> highScores = new ArrayList<Integer>();
-    private static final String SCORE_FILE = System.getProperty("user.home") + File.separator + ".eves_apple_scores.txt";
     private StackPane rootPane;
     private VBox startScreen;
     private VBox levelUpOverlay;
@@ -64,63 +61,13 @@ extends Application {
     private VBox pauseOverlay;
     private AnimationTimer gameTimer;
     private Font pixelFont;
-    private static final String FONT_URL = "https://github.com/google/fonts/raw/main/ofl/pressstart2p/PressStart2P-Regular.ttf";
-
-    private void loadHighScores() {
-        this.highScores.clear();
-        File file = new File(SCORE_FILE);
-        if (file.exists()) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(file));){
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    this.highScores.add(Integer.parseInt(line.trim()));
-                }
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        while (this.highScores.size() < 10) {
-            this.highScores.add(0);
-        }
-        this.highScores.sort(Collections.reverseOrder());
-    }
-
-    private void saveHighScores() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(SCORE_FILE));){
-            for (int score : this.highScores) {
-                writer.println(score);
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private boolean isNewRecord(int score) {
-        if (score <= 0) {
-            return false;
-        }
-        if (this.highScores.isEmpty()) {
-            return true;
-        }
-        return score > this.highScores.get(0);
-    }
-
-    private void updateHighScores(int newScore) {
-        this.highScores.add(newScore);
-        this.highScores.sort(Collections.reverseOrder());
-        while (this.highScores.size() > 10) {
-            this.highScores.remove(this.highScores.size() - 1);
-        }
-        this.saveHighScores();
-    }
+    private final ScoreManager scoreManager = new ScoreManager();
 
     public void start(Stage primaryStage) {
         String[][] links;
-        this.loadHighScores();
+        this.scoreManager.loadHighScores();
         try {
-            this.pixelFont = Font.loadFont(FONT_URL, 14.0);
+            this.pixelFont = Font.loadFont(GameConfig.FONT_URL, 14.0);
             if (this.pixelFont == null) {
                 this.pixelFont = Font.font("Courier New", 14.0);
             }
@@ -128,8 +75,8 @@ extends Application {
         catch (Exception e2) {
             this.pixelFont = Font.font("Courier New", 14.0);
         }
-        Canvas canvas = new Canvas(600.0, 600.0);
-        this.renderer = new GameRenderer(canvas, 20, 20);
+        Canvas canvas = new Canvas(GameConfig.CANVAS_WIDTH, GameConfig.CANVAS_HEIGHT);
+        this.renderer = new GameRenderer(canvas, GameConfig.COLS, GameConfig.ROWS);
         VBox gameLayout = new VBox(new Node[]{canvas});
         gameLayout.setAlignment(Pos.CENTER);
         gameLayout.setStyle("-fx-background-color: #000000;");
@@ -292,7 +239,7 @@ extends Application {
                 if (!Main.this.gameIsRunning) {
                     return;
                 }
-                long currentNanosPerTick = 125000000L;
+                long currentNanosPerTick = GameConfig.NANOS_PER_TICK;
                 if (now - Main.this.lastTickTime >= currentNanosPerTick) {
                     Main.this.lastTickTime = now;
                     Main.this.game.tick(Main.this.inputBuffer.poll());
@@ -301,10 +248,10 @@ extends Application {
                     if (Main.this.currentState.status == GameState.Status.GAME_OVER || Main.this.currentState.status == GameState.Status.GAME_WON) {
                         Main.this.gameIsRunning = false;
                         int finalScore = Main.this.currentState.score;
-                        if (Main.this.isNewRecord(finalScore)) {
+                        if (Main.this.scoreManager.isNewRecord(finalScore)) {
                             Main.this.triggerLevelUpAnimation(finalScore, endScoresBox);
                         } else {
-                            Main.this.updateHighScores(finalScore);
+                            Main.this.scoreManager.updateHighScores(finalScore);
                             Main.this.showEndScoreboard(endScoresBox);
                         }
                     }
@@ -333,8 +280,8 @@ extends Application {
 
     private void populateScoreboard(VBox scoresBox) {
         scoresBox.getChildren().clear();
-        for (int i = 0; i < this.highScores.size(); ++i) {
-            Text scoreText = new Text(String.format(" %2d . . %6d ", i + 1, this.highScores.get(i)));
+        for (int i = 0; i < this.scoreManager.getHighScores().size(); ++i) {
+            Text scoreText = new Text(String.format(" %2d . . %6d ", i + 1, this.scoreManager.getHighScores().get(i)));
             scoreText.setFont(Font.font(this.pixelFont.getFamily(), 12.0));
             scoreText.setStyle("-fx-fill: #FFFFFF;");
             scoresBox.getChildren().add(scoreText);
@@ -361,7 +308,7 @@ extends Application {
             PauseTransition pause = new PauseTransition(Duration.seconds(2.0));
             pause.setOnFinished(pe -> {
                 this.levelUpOverlay.setVisible(false);
-                this.updateHighScores(finalScore);
+                this.scoreManager.updateHighScores(finalScore);
                 this.showEndScoreboard(endScoresBox);
             });
             pause.play();
@@ -370,7 +317,7 @@ extends Application {
 
     private void restartGame() {
         this.inputBuffer.clear();
-        this.game = new Game(20, 20, true);
+        this.game = new Game(GameConfig.COLS, GameConfig.ROWS, true);
         this.currentState = this.game.getState();
         this.lastTickTime = System.nanoTime();
     }
